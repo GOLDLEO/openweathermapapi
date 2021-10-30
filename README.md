@@ -23,7 +23,7 @@ concig['units] = 'metric'
 5. Activate env
 > $ source env/bin/activate
 7. Install dependencies
-> (env)$ pip install requirements.txt
+> (env)$ pip install -r requirements.txt
 8. Running tests to make sure everything works
 > $ python3 openweathermapapi.py runtests
 
