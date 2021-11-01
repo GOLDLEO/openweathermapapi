@@ -2,18 +2,28 @@ import requests
 import sys
 from pprint import pprint
 
+from exceptions import ApiKeyValueError
+
 from config import config
 
 
 
 class OpenWeather:
 	def __init__(self, token_api=None, lang='ru', units='metric'):
+		""" Initializing an instance of a class OpenWeather. Be sure to enter the API KEY.
+		params: self.coord_by_city(self, city=None)
+		"""
+		if token_api is None:
+			raise ApiKeyValueError('To work with the service, you need to specify the api key. Loot here: https://www.openweathermapapi.com')		
 		self.token_api = token_api
 		self.lang = lang
 		self.units = units
 		self.base_url = 'http://api.openweathermap.org/data/2.5/'
 
 	def current_weather_by_city(self, city=None):
+		""" This is function return all data about weather in your city. 
+		params: self.coord_by_city(self, city=None)
+		"""
 		data_json = {'status':'','message':''} # создаем пустой словарь для вывода данных
 		if city is None:
 			data_json['status'] = 400
@@ -35,6 +45,9 @@ class OpenWeather:
 
 
 	def coord_by_city(self, city=None):
+		""" This is function return coordinates by your city. It is need for other methods because api service work just with latitude and longitude. 
+		params: self.coord_by_city(self, city=None)
+		"""
 		data_json = {}
 		if city is None:
 			data_json['status'] = 400
@@ -57,8 +70,8 @@ class OpenWeather:
 
 
 	def air_pollution(self, city=None):
-		""" This API method show national danger alerts in your country or city 
-		params: alerts(self, city=None)
+		""" This is function show national danger alerts in your country or city 
+		params: self.alerts(self, city=None)
 		"""
 		data_json = {}
 		if city is None:
@@ -83,7 +96,7 @@ class OpenWeather:
 
 
 	def alerts(self, city=None):
-		""" This API method show national danger alerts in your country or city 
+		""" This is fucntion show national danger alerts in your country or city 
 		params: alerts(self, city=None)
 		"""
 		data_json = {}
@@ -125,7 +138,7 @@ if __name__ == '__main__':
 		print('Тест окончен.')
 	if sys.argv[1] == '--help' or sys.argv[1] == '-H':
 		print('class OpenWeather')
-		print('\t__init__(self, token_api=config["API_KEY"], lang=config["lang"], units=config["units"])')
+		print('\t__init__(self, token_api="3d68c5s9e1209asdab832ca3a3517d2b0", lang="ru", units="metric"')
 		print('All methods: ')
 		for method in reversed(dir(OpenWeather)):
 			try:
@@ -136,4 +149,24 @@ if __name__ == '__main__':
 					print()
 			except:
 				pass
+		print('Example how it works:')
+
+		string_example = """
+		from pprint import pprint
+
+		openweather_connect = OpenWeather(token_api="3d68c5s9e1209asdab832ca3a3517d2b0", lang="en", units="metric")
+		my_city = 'Paris'
+		if openweather_connect.current_weather_by_city(my_city)['status'] == 200:
+			pprint(openweather_connect.current_weather_by_city(my_city))
+			pprint(openweather_connect.air_pollution(my_city))
+
+
+			OR  
+
+		data = openweather_connect.current_weather_by_city('Париж')['data']
+		pprint(data)"""
+		print(string_example)
+
+
+
 
