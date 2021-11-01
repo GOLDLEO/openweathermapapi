@@ -1,5 +1,6 @@
 import requests
 import sys
+from pprint import pprint
 
 from config import config
 
@@ -41,14 +42,24 @@ class OpenWeather:
 		else:
 			url = f'http://api.openweathermap.org/geo/1.0/direct?q={city}&appid={self.token_api}'
 			response = requests.get(url)
-			data_json['status'] = 200
-			data_json['data'] = tuple([response.json()[0]['lat'],response.json()[0]['lon']])
+			
+			try:
+				data_json['data'] = tuple([response.json()[0]['lat'],response.json()[0]['lon']])
+				data_json['status'] = 200
+			except Exception as err:
+				print(err)
+				data_json['status'] = 404
+				data_json['message'] = err
+
 		return data_json
 
 
 
 
 	def air_pollution(self, city=None):
+		""" This API method show national danger alerts in your country or city 
+		params: alerts(self, city=None)
+		"""
 		data_json = {}
 		if city is None:
 			data_json['status'] = 400
@@ -72,6 +83,9 @@ class OpenWeather:
 
 
 	def alerts(self, city=None):
+		""" This API method show national danger alerts in your country or city 
+		params: alerts(self, city=None)
+		"""
 		data_json = {}
 		if city is None:
 			data_json['status'] = 404
@@ -94,6 +108,9 @@ class OpenWeather:
 def run_test():
 	owm_conn = OpenWeather(token_api=config['API_KEY'], lang=config['lang'], units=config['units'])
 	city = config['city']
+	pprint(owm_conn.air_pollution(city))
+	pprint(owm_conn.current_weather_by_city(city))
+
 	assert owm_conn.current_weather_by_city(city)['status'] == 200
 	assert owm_conn.air_pollution(city)['status'] == 200
 	assert owm_conn.coord_by_city(city)['status'] == 200
@@ -106,6 +123,17 @@ if __name__ == '__main__':
 		print('Запускаем тесты')
 		run_test()
 		print('Тест окончен.')
-
-
+	if sys.argv[1] == '--help' or sys.argv[1] == '-H':
+		print('class OpenWeather')
+		print('\t__init__(self, token_api=config["API_KEY"], lang=config["lang"], units=config["units"])')
+		print('All methods: ')
+		for method in reversed(dir(OpenWeather)):
+			try:
+				if '__' not in method:
+					print('\tdef', method)
+					print('\t\tDescription: ', end='')
+					print('',eval('OpenWeather.' + method + '.__doc__'))
+					print()
+			except:
+				pass
 
