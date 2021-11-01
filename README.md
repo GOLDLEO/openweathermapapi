@@ -26,5 +26,7 @@ concig['units] = 'metric'
 > (env)$ pip install -r requirements.txt
 8. Running tests to make sure everything works
 > $ python3 openweathermapapi.py runtests
+9. Run command help
+> $ python3 openweathermapapi.py --help
 
 Enjoy:)
